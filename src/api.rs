@@ -85,6 +85,7 @@ pub enum Futures {
     ChangeInitialLeverage,
     Account,
     OpenOrders,
+    AllOrders,
 }
 
 impl From<API> for String {
@@ -116,14 +117,14 @@ impl From<API> for String {
                     Spot::MyTrades => "/api/v3/myTrades",
                     Spot::UserDataStream => "/api/v3/userDataStream",
                 }
-            },
+            }
             API::Savings(route) => {
                 match route {
                     Sapi::AllCoins => "/sapi/v1/capital/config/getall",
                     Sapi::AssetDetail => "/sapi/v1/asset/assetDetail",
                     Sapi::DepositAddress => "/sapi/v1/capital/deposit/address",
                 }
-            },
+            }
             API::Futures(route) => {
                 match route {
                     Futures::Ping => "/fapi/v1/ping",
@@ -152,13 +153,16 @@ impl From<API> for String {
                     Futures::OpenInterestHist => "/futures/data/openInterestHist",
                     Futures::TopLongShortAccountRatio => "/futures/data/topLongShortAccountRatio",
                     Futures::TopLongShortPositionRatio => "/futures/data/topLongShortPositionRatio",
-                    Futures::GlobalLongShortAccountRatio => "/futures/data/globalLongShortAccountRatio",
+                    Futures::GlobalLongShortAccountRatio => {
+                        "/futures/data/globalLongShortAccountRatio"
+                    }
                     Futures::TakerlongshortRatio => "/futures/data/takerlongshortRatio",
                     Futures::LvtKlines => "/fapi/v1/lvtKlines",
                     Futures::IndexInfo => "/fapi/v1/indexInfo",
                     Futures::ChangeInitialLeverage => "/fapi/v1/leverage",
                     Futures::Account => "/fapi/v2/account",
-                    Futures::OpenOrders => "/fapi/v1/openOrders"
+                    Futures::OpenOrders => "/fapi/v1/openOrders",
+                    Futures::AllOrders => "/fapi/v1/allOrders",
                 }
             }
         })
@@ -259,7 +263,11 @@ impl Binance for FuturesGeneral {
         api_key: Option<String>, secret_key: Option<String>, config: &Config,
     ) -> FuturesGeneral {
         FuturesGeneral {
-            client: Client::new(api_key, secret_key, config.futures_rest_api_endpoint.clone()),
+            client: Client::new(
+                api_key,
+                secret_key,
+                config.futures_rest_api_endpoint.clone(),
+            ),
         }
     }
 }
@@ -273,7 +281,11 @@ impl Binance for FuturesMarket {
         api_key: Option<String>, secret_key: Option<String>, config: &Config,
     ) -> FuturesMarket {
         FuturesMarket {
-            client: Client::new(api_key, secret_key, config.futures_rest_api_endpoint.clone()),
+            client: Client::new(
+                api_key,
+                secret_key,
+                config.futures_rest_api_endpoint.clone(),
+            ),
             recv_window: config.recv_window,
         }
     }
@@ -284,9 +296,15 @@ impl Binance for FuturesAccount {
         Self::new_with_config(api_key, secret_key, &Config::default())
     }
 
-    fn new_with_config(api_key: Option<String>, secret_key: Option<String>, config: &Config) -> Self {
+    fn new_with_config(
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,
+    ) -> Self {
         Self {
-            client: Client::new(api_key, secret_key, config.futures_rest_api_endpoint.clone()),
+            client: Client::new(
+                api_key,
+                secret_key,
+                config.futures_rest_api_endpoint.clone(),
+            ),
             recv_window: config.recv_window,
         }
     }

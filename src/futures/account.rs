@@ -357,4 +357,18 @@ impl FuturesAccount {
             .get_signed(API::Futures(Futures::OpenOrders), Some(request))
             .await
     }
+
+    // Get all account orders in the past 7 days
+    pub async fn get_all_orders<S>(&self, symbol: S) -> Result<Vec<crate::futures::model::Order>>
+    where
+        S: Into<String>,
+    {
+        let mut parameters: BTreeMap<String, String> = BTreeMap::new();
+        parameters.insert("symbol".into(), symbol.into());
+
+        let request = build_signed_request(parameters, self.recv_window)?;
+        self.client
+            .get_signed(API::Futures(Futures::AllOrders), Some(request))
+            .await
+    }
 }
