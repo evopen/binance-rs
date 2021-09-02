@@ -20,6 +20,7 @@ pub struct ExchangeInformation {
 #[serde(rename_all = "camelCase")]
 pub struct Symbol {
     pub symbol: String,
+    pub contract_type: String,
     pub status: String,
     pub maint_margin_percent: String,
     pub required_margin_percent: String,
@@ -172,11 +173,11 @@ pub struct OpenInterest {
     pub symbol: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Order {
     pub client_order_id: String,
-    #[serde(with = "string_or_float", default="default_stop_price")]
+    #[serde(with = "string_or_float", default = "default_stop_price")]
     pub cum_qty: f64,
     #[serde(with = "string_or_float")]
     pub cum_quote: f64,
@@ -328,7 +329,6 @@ pub struct AccountBalance {
     pub max_withdraw_amount: f64,
     pub margin_available: bool,
     pub update_time: u64,
-
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
